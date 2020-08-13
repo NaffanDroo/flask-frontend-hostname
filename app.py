@@ -2,7 +2,7 @@ import socket
 import flask
 import requests
 import os
-from flask import jsonify, render_template
+from flask import render_template
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
@@ -29,7 +29,8 @@ def home():
 def call_backend() -> str:
     url = service_url()
     try:
-        response = requests.get(url)
+        app.logger.debug(f"Attempting to connect to the API at {url}")
+        response = requests.get(url, timeout=5)
         if response.ok:
             try:
                 app.logger.info(f"Successfully connected to the API: {url}")
@@ -50,6 +51,11 @@ def call_backend() -> str:
             f"Connection failed while trying to connect to the API: {url}"
         )
         return "Unknown"
+    except requests.exceptions.ReadTimeout as re:
+        app.logger.warning(
+            f"Connection timed out while trying to connect to the API: {url}"
+        )
+        return "Timed out"
 
 
 def namespace() -> str:
@@ -58,7 +64,8 @@ def namespace() -> str:
 
 def service_url() -> str:
     suffix = ".svc.cluster.local"
-    if namespace():
-        return f"http://flask-backend.{namespace()}.{suffix}"
+    k8s_namespace = namespace()
+    if k8s_namespace:
+        return f"http://flask-backend.{k8s_namespace}.{suffix}"
     else:
         return "http://localhost:5000"
