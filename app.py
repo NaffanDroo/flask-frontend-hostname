@@ -27,10 +27,10 @@ def home():
 
 
 def call_backend() -> str:
-    url = service_url()
+    url = f"{service_url()}/v1/host"
     try:
         app.logger.debug(f"Attempting to connect to the API at {url}")
-        response = requests.get(url, timeout=5)
+        response = requests.get(url, timeout=2)
         if response.ok:
             try:
                 app.logger.info(f"Successfully connected to the API: {url}")
@@ -63,9 +63,9 @@ def namespace() -> str:
 
 
 def service_url() -> str:
-    suffix = ".svc.cluster.local"
+    suffix = "svc.cluster.local"
     k8s_namespace = namespace()
     if k8s_namespace:
-        return f"http://flask-backend.{k8s_namespace}.{suffix}"
+        return f"http://backend-service.{k8s_namespace}.{suffix}"
     else:
         return "http://localhost:5000"

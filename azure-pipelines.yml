@@ -10,6 +10,7 @@ resources:
 
 variables:
   tag: '$(Build.BuildId)'
+  DockerImageName: 'azdo-gcp-dev/flask-frontend-hostname'
 
 stages:
 - stage: Build
@@ -28,3 +29,12 @@ stages:
         command: 'buildAndPush'
         Dockerfile: '**/Dockerfile'
         tags: '$(tag)'
+    - task: CmdLine@1
+      displayName: 'Lock image version in deployment.yaml'
+      inputs:
+        filename: /bin/bash
+        arguments: '-c "awk ''{gsub(\"DOCKER_IMAGE_NAME\", \"gcr.io/$(DockerImageName):$(Build.BuildId)\", $0); print}'' deployment.yaml > $(build.artifactstagingdirectory)/deployment.yaml"'
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact'
+      inputs:
+        PathtoPublish: '$(build.artifactstagingdirectory)'
