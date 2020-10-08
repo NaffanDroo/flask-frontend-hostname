@@ -4,7 +4,7 @@ RUN useradd -m app
 USER app
 WORKDIR /home/app
 
-RUN pip install --user poetry==1.1.0b2
+RUN pip install --user poetry==1.1.0b4
 
 # ======= Final image =======
 FROM base
@@ -17,4 +17,4 @@ RUN poetry install --no-dev --no-interaction
 
 EXPOSE 5000
 
-CMD poetry run gunicorn --bind 0.0.0.0:5000 --workers 1 --threads 2 main:app
+CMD poetry run gunicorn --bind 0.0.0.0:5000 --workers 1 --threads 2 main:app --access-logfile '-'

@@ -26,13 +26,13 @@ spec:
           livenessProbe:
             tcpSocket:
               port: 5000
-            initialDelaySeconds: 5
+            initialDelaySeconds: 15
             periodSeconds: 10
           readinessProbe:
             httpGet:
             tcpSocket:
               port: 5000
-            initialDelaySeconds: 3
+            initialDelaySeconds: 15
             periodSeconds: 5
           resources:
             limits:
