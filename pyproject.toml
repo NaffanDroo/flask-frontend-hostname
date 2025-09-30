@@ -8,7 +8,7 @@ license = "MIT"
 [tool.poetry.dependencies]
 python = "^3.8"
 flask = "^2"
-gunicorn = "^20"
+gunicorn = "^22"
 requests = "^2"
 
 [tool.poetry.dev-dependencies]
